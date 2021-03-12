@@ -1,0 +1,53 @@
+version: "3.1"
+services:
+  knowage:
+    image: savantly/knowage-server-docker:latest
+    depends_on:
+      - knowagedb
+    ports:
+      - "8080:8080"
+    networks:
+      - main
+    environment:
+      - DB_USER=$DB_USER
+      - DB_PASS=$DB_PASS
+      - DB_DB=$DB_DB
+      - DB_HOST=$DB_HOST
+      - DB_PORT=$DB_PORT
+      - HMAC_KEY=$HMAC_KEY
+      - PASSWORD_ENCRYPTION_SECRET=$PASSWORD_ENCRYPTION_SECRET
+      - PUBLIC_ADDRESS=localhost
+
+  knowagepython:
+    image: knowagelabs/knowage-python-docker:7.2
+    environment:
+      - HMAC_KEY=$HMAC_KEY
+      - KNOWAGE_PUBLIC_ADDRESS=knowage
+      - PUBLIC_ADDRESS=localhost
+    networks:
+      - main
+
+  knowager:
+    image: knowagelabs/knowage-r-docker:7.2
+    environment:
+      - HMAC_KEY=$HMAC_KEY
+    networks:
+      - main
+
+  knowagedb:
+    image: mariadb:10.3
+    environment:
+      - MYSQL_USER=$DB_USER
+      - MYSQL_PASSWORD=$DB_PASS
+      - MYSQL_DATABASE=$DB_DB
+      - MYSQL_ROOT_PASSWORD=$DB_ROOT_PASS
+    networks:
+      - main
+    volumes:
+      - "db:/var/lib/mysql"
+
+volumes:
+  db:
+
+networks:
+  main:
