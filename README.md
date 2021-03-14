@@ -1,6 +1,62 @@
 # Docker Image for Knowage
 
-Modified fork with a Prometheus exporter, JMX exposure, and refined memory configuration.
+Modified fork with a generic OAuth support, Prometheus exporter, JMX exposure, and refined memory configuration.
+
+
+# Quick Start  
+
+I developed this fork to work with kubernetes and oauth2 [specifically tested with keycloak]  
+The docker-compose file is a work-in-progress, so it may not work.  
+I can confirm the knowage image is working with Keycloak on my K8S cluster.  
+
+The source code for the Knowage OAuth support is here -  
+https://github.com/savantly-net/Knowage-Server/tree/jb/oauth2  
+
+But I've included the necessary jar in this project to build it easier for now.  
+The image is available on Docker as `savantly/knowage-server-docker:latest`  
+
+OAuth can be configured through env vars. See the [docker-compose](./docker-compose) file for details.  
+
+The server expects your oauth access token to contain a `roles` claim.  
+If the email of the user matches the configured OAUTH2_ADMIN_EMAIL parameter, it will be granted super admin access.  
+
+You can also pass system properties in the JAVA_OPTS if you prefer that over env vars.  
+See here - https://github.com/savantly-net/Knowage-Server/blob/jb/oauth2/knowageoauth2/src/main/java/it/eng/knowage/security/oauth2/OAuth2Config.java
+
+
+Run this SQL to update your knowage DB configuration to leverage the oauth functions.  
+This could also be automated as part of the docker entrypoint.  
+You may need to update the schema name to match your config.  
+
+```
+UPDATE knowage.SBI_CONFIG
+SET VALUE_CHECK = 'admin'
+WHERE label = 'SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN';
+
+UPDATE knowage.SBI_CONFIG
+SET VALUE_CHECK = 'dev'
+WHERE label = 'SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.DEV_ROLE-PATTERN';
+
+UPDATE knowage.SBI_CONFIG
+SET VALUE_CHECK = 'modeladmin'
+WHERE label = 'SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.MODEL_ADMIN-PATTERN';
+
+UPDATE knowage.SBI_CONFIG
+SET VALUE_CHECK = 'true'
+WHERE label = 'SPAGOBI_SSO.ACTIVE';
+
+-- original it.eng.spagobi.security.InternalSecurityInfoProviderImpl
+UPDATE knowage.SBI_CONFIG
+SET VALUE_CHECK = 'it.eng.knowage.security.oauth2.OAuth2SecurityInfoProvider'
+WHERE label = 'SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className';
+
+-- original it.eng.spagobi.security.InternalSecurityServiceSupplierImpl
+UPDATE knowage.SBI_CONFIG
+SET VALUE_CHECK = 'it.eng.knowage.security.oauth2.OAuth2SecurityServiceSupplier'
+WHERE label = 'SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className';
+```
+
+# Orignal README below
 
 ## What is Knowage?
 

@@ -28,7 +28,10 @@
 			to authenticate users -->
 		<Environment name="resource_path" type="java.lang.String" value="${catalina.home}/resources"/>
 		<Environment name="service_url" type="java.lang.String" value="http://localhost:8080/knowage"/>
-		<Environment name="sso_class" type="java.lang.String" value="it.eng.spagobi.services.common.JWTSsoService"/>
+		
+		<!-- <Environment name="sso_class" type="java.lang.String" value="it.eng.spagobi.services.common.JWTSsoService"/> -->
+		
+		<Environment name="sso_class" type="java.lang.String" value="it.eng.spagobi.services.oauth2.Oauth2SsoService"/>
 		<Environment description="HMAC key" name="hmacKey" type="java.lang.String" value="__HMAC-key__"/>
 		<Environment description="File for security encryption location" name="password_encryption_secret" type="java.lang.String" value="${catalina.home}/conf/passwordEncryptionSecret"/>
 
@@ -39,7 +42,7 @@
 		
 		<!-- KNOWAGE CACHE -->
 		<Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxTotal="20" maxIdle="4"
-			maxWaitMillis="3000" name="jdbc/ds_cache" type="javax.sql.DataSource"
+			maxWaitMillis="30000" name="jdbc/ds_cache" type="javax.sql.DataSource"
 			 url="jdbc:mariadb://localhost:3310/cache" username="root" password="root" />
 
 		<!-- MULTITHREAD WORK MANAGER -->

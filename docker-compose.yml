@@ -1,28 +1,37 @@
 version: "3.1"
 services:
   knowage:
-    image: savantly/knowage-server-docker:latest
+    #image: savantly/knowage-server-docker:latest
+    build: .
     depends_on:
       - knowagedb
     ports:
-      - "8080:8080"
+      - 8080:8080
     networks:
       - main
     environment:
-      - DB_USER=$DB_USER
-      - DB_PASS=$DB_PASS
-      - DB_DB=$DB_DB
-      - DB_HOST=$DB_HOST
-      - DB_PORT=$DB_PORT
-      - HMAC_KEY=$HMAC_KEY
-      - PASSWORD_ENCRYPTION_SECRET=$PASSWORD_ENCRYPTION_SECRET
+      - DB_USER=knowage
+      - DB_PASS=knowage
+      - DB_DB=knowage
+      - DB_HOST=knowagedb
+      - DB_PORT=3306
+      - HMAC_KEY=1234123412341234123412341234
+      - PASSWORD_ENCRYPTION_SECRET=1234123421341234123421341234
       - PUBLIC_ADDRESS=localhost
+      - OAUTH2_AUTHORIZE_URL=http://host.docker.internal:8090/default/authorize
+      - OAUTH2_CLIENT_ID=knowage
+      - OAUTH2_CLIENT_SECRET=1234567890
+      - OAUTH2_REDIRECT_URL=http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage
+      - OAUTH2_TOKEN_URL=http://host.docker.internal:8090/default/token
+      - OAUTH2_USER_INFO_URL=http://host.docker.internal:8090/default/token
+      - OAUTH2_SCOPES=openid,profile
+      - OAUTH2_ADMIN_EMAIL=me@savantly.net
 
   knowagepython:
     image: knowagelabs/knowage-python-docker:7.2
     environment:
-      - HMAC_KEY=$HMAC_KEY
-      - KNOWAGE_PUBLIC_ADDRESS=knowage
+      - HMAC_KEY=1234123412341234123412341234
+      - KNOWAGE_PUBLIC_ADDRESS=localhost
       - PUBLIC_ADDRESS=localhost
     networks:
       - main
@@ -30,21 +39,30 @@ services:
   knowager:
     image: knowagelabs/knowage-r-docker:7.2
     environment:
-      - HMAC_KEY=$HMAC_KEY
+      - HMAC_KEY=1234123412341234123412341234
     networks:
       - main
 
   knowagedb:
     image: mariadb:10.3
     environment:
-      - MYSQL_USER=$DB_USER
-      - MYSQL_PASSWORD=$DB_PASS
-      - MYSQL_DATABASE=$DB_DB
-      - MYSQL_ROOT_PASSWORD=$DB_ROOT_PASS
+      - MYSQL_USER=knowage
+      - MYSQL_PASSWORD=knowage
+      - MYSQL_DATABASE=knowage
+      - MYSQL_ROOT_PASSWORD=knowage
     networks:
       - main
     volumes:
       - "db:/var/lib/mysql"
+  
+  mock-oauth2-server:
+    image: mock-oauth2-server:0.3-SNAPSHOT
+    #image: nielsbergsma/mock-oauth2-server:0.2.0
+    ports:
+      - 8090:8080
+    hostname: host.docker.internal
+    networks:
+      - main
 
 volumes:
   db:

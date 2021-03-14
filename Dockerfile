@@ -16,10 +16,8 @@ ARG TOMCAT_WEBAPPS=${TOMCAT_HOME}/webapps
 ARG TOMCAT_RESOURCES=${TOMCAT_HOME}/resources
 ARG TOMCAT_LOGS=${TOMCAT_HOME}/logs
 
-# WIP
-ARG OAUTH_LIB_NAME="knowage-oauth2-servlet-filter-7.2.0-20210306.162318-1.jar"
-ARG OAUTH_LIB="https://oss.sonatype.org/service/local/repositories/snapshots/content/net/savantly/knowage/knowage-oauth2-servlet-filter/7.2.0-SNAPSHOT/${OAUTH_LIB_NAME}"
-RUN  wget -q -O "${TOMCAT_LIB}/${OAUTH_LIB_NAME}"  "${OAUTH_LIB}"
+# Add OAuth support
+COPY knowage/WEB-INF/lib/knowageoauth2-7.4.0-SNAPSHOT.jar ${TOMCAT_WEBAPPS}/knowage/WEB-INF/lib/
 
 # JVM metrics exporter 
 RUN wget -q -O  ${KNOWAGE_DIRECTORY}/metrics.jar ${METRICS_JAR}
@@ -28,7 +26,6 @@ RUN wget -q -O  ${KNOWAGE_DIRECTORY}/metrics.jar ${METRICS_JAR}
 RUN echo "" > ${TOMCAT_BIN}/setenv.sh
 # We reset JAVA_OPTS to get rid of this - 
 # RUN echo "export JAVA_OPTS=\"\$JAVA_OPTS -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap\"" >> ${TOMCAT_BIN}/setenv.sh
-
 
 # Add metric agent 
 RUN echo "export JAVA_OPTS=\"\$JAVA_OPTS -javaagent:${KNOWAGE_DIRECTORY}/metrics.jar=0.0.0.0:8081:${KNOWAGE_DIRECTORY}/metrics.yml\"" >> ${TOMCAT_BIN}/setenv.sh
@@ -47,11 +44,12 @@ RUN echo "export JAVA_OPTS=\"\$JAVA_OPTS -XX:MetaspaceSize=250M -XX:InitialRAMPe
 # GC logs
 RUN echo "export JAVA_OPTS=\"\$JAVA_OPTS -XX:+PrintGCDateStamps -verbose:gc -XX:+PrintGCDetails -Xloggc:${TOMCAT_LOGS}/gc.log -XX:-HeapDumpOnOutOfMemoryError\"" >> ${TOMCAT_BIN}/setenv.sh
 
-RUN echo "org.apache.coyote.http2.level = FINE" >> ${TOMCAT_CONF}/logging.properties
-RUN echo "org.apache.tomcat.websocket.level = FINE" >> ${TOMCAT_CONF}/logging.properties
-RUN echo "it.eng = FINE" >> ${TOMCAT_CONF}/logging.properties
+RUN echo "log4j.logger.org.apache.coyote.http2.level=INFO, knowage" >> ${TOMCAT_WEBAPPS}/knowage/WEB-INF/classes/log4j.properties && \
+    echo "log4j.logger.org.apache.tomcat.websocket.level=INFO, knowage" >> ${TOMCAT_WEBAPPS}/knowage/WEB-INF/classes/log4j.properties && \
+    echo "log4j.logger.it.eng.spagobi.security.oauth2=INFO, knowage" >> ${TOMCAT_WEBAPPS}/knowage/WEB-INF/classes/log4j.properties
 
 COPY metrics.yml ./
 
 # COPY entrypoint.sh ./
-COPY server.xml ./apache-tomcat/conf/
+COPY server.xml ${TOMCAT_CONF}/
+COPY knowage/WEB-INF/web.xml ./apache-tomcat/webapps/knowage/WEB-INF/web.xml
