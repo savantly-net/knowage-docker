@@ -15,7 +15,7 @@ https://github.com/savantly-net/Knowage-Server/tree/jb/oauth2
 But I've included the necessary jar in this project to build it easier for now.  
 The image is available on Docker as `savantly/knowage-server-docker:latest`  
 
-OAuth can be configured through env vars. See the [docker-compose](./docker-compose) file for details.  
+OAuth can be configured through env vars. See the [docker-compose.yml](./docker-compose.yml) file for details.  
 
 The server expects your oauth access token to contain a `roles` claim.  
 If the email of the user matches the configured OAUTH2_ADMIN_EMAIL parameter, it will be granted super admin access.  
