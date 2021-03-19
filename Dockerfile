@@ -42,11 +42,13 @@ RUN echo "export JAVA_OPTS=\"\$JAVA_OPTS -Djava.security.manager -Djava.security
 RUN echo "export JAVA_OPTS=\"\$JAVA_OPTS -XX:MetaspaceSize=250M -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=50.0  -XX:MaxRAMPercentage=90.0\"" >> ${TOMCAT_BIN}/setenv.sh
 
 # GC logs
-RUN echo "export JAVA_OPTS=\"\$JAVA_OPTS -XX:+PrintGCDateStamps -verbose:gc -XX:+PrintGCDetails -Xloggc:${TOMCAT_LOGS}/gc.log -XX:-HeapDumpOnOutOfMemoryError\"" >> ${TOMCAT_BIN}/setenv.sh
+#RUN echo "export JAVA_OPTS=\"\$JAVA_OPTS -XX:+PrintGCDateStamps -verbose:gc -XX:+PrintGCDetails -Xloggc:${TOMCAT_LOGS}/gc.log -XX:-HeapDumpOnOutOfMemoryError\"" >> ${TOMCAT_BIN}/setenv.sh
 
-RUN echo "log4j.logger.org.apache.coyote.http2.level=INFO, knowage" >> ${TOMCAT_WEBAPPS}/knowage/WEB-INF/classes/log4j.properties && \
+RUN echo "" >> ${TOMCAT_WEBAPPS}/knowage/WEB-INF/classes/log4j.properties && \
+    echo "log4j.logger.org.apache.coyote.http2.level=INFO, knowage" >> ${TOMCAT_WEBAPPS}/knowage/WEB-INF/classes/log4j.properties && \
     echo "log4j.logger.org.apache.tomcat.websocket.level=INFO, knowage" >> ${TOMCAT_WEBAPPS}/knowage/WEB-INF/classes/log4j.properties && \
-    echo "log4j.logger.it.eng.spagobi.security.oauth2=INFO, knowage" >> ${TOMCAT_WEBAPPS}/knowage/WEB-INF/classes/log4j.properties
+    echo "log4j.logger.it.eng.knowage.security=INFO, knowage" >> ${TOMCAT_WEBAPPS}/knowage/WEB-INF/classes/log4j.properties && \
+    echo "log4j.logger.it.eng.knowage.security.oauth2=DEBUG, knowage" >> ${TOMCAT_WEBAPPS}/knowage/WEB-INF/classes/log4j.properties
 
 COPY metrics.yml ./
 

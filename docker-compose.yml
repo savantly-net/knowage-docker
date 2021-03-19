@@ -21,11 +21,13 @@ services:
       - OAUTH2_AUTHORIZE_URL=http://host.docker.internal:8090/default/authorize
       - OAUTH2_CLIENT_ID=knowage
       - OAUTH2_CLIENT_SECRET=1234567890
-      - OAUTH2_REDIRECT_URL=http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage
+      - OAUTH2_REDIRECT_ADDRESS=http://localhost:8080
+      - OAUTH2_REDIRECT_PATH=/knowage/servlet/AdapterHTTP?PAGE=LoginPage
       - OAUTH2_TOKEN_URL=http://host.docker.internal:8090/default/token
       - OAUTH2_USER_INFO_URL=http://host.docker.internal:8090/default/token
-      - OAUTH2_SCOPES=openid,profile
+      - OAUTH2_SCOPES=openid profile
       - OAUTH2_ADMIN_EMAIL=me@savantly.net
+      - OAUTH2_PROFILE_ATTRIBUTES=myAttr1,myAttr2
 
   knowagepython:
     image: knowagelabs/knowage-python-docker:7.2
