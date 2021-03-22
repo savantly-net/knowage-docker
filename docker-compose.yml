@@ -10,48 +10,48 @@ services:
     networks:
       - main
     environment:
-      - DB_USER=knowage
-      - DB_PASS=knowage
-      - DB_DB=knowage
-      - DB_HOST=knowagedb
-      - DB_PORT=3306
-      - HMAC_KEY=1234123412341234123412341234
-      - PASSWORD_ENCRYPTION_SECRET=1234123421341234123421341234
-      - PUBLIC_ADDRESS=localhost
-      - OAUTH2_AUTHORIZE_URL=http://host.docker.internal:8090/default/authorize
-      - OAUTH2_CLIENT_ID=knowage
-      - OAUTH2_CLIENT_SECRET=1234567890
-      - OAUTH2_REDIRECT_ADDRESS=http://localhost:8080
-      - OAUTH2_REDIRECT_PATH=/knowage/servlet/AdapterHTTP?PAGE=LoginPage
-      - OAUTH2_TOKEN_URL=http://host.docker.internal:8090/default/token
-      - OAUTH2_USER_INFO_URL=http://host.docker.internal:8090/default/token
-      - OAUTH2_SCOPES=openid profile
-      - OAUTH2_ADMIN_EMAIL=me@savantly.net
-      - OAUTH2_PROFILE_ATTRIBUTES=myAttr1,myAttr2
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_DB=${DB_DB}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - HMAC_KEY=${HMAC_KEY}
+      - PASSWORD_ENCRYPTION_SECRET=${PASSWORD_ENCRYPTION_SECRET}
+      - PUBLIC_ADDRESS=${PUBLIC_ADDRESS}
+      - OAUTH2_AUTHORIZE_URL=${OAUTH2_AUTHORIZE_URL}
+      - OAUTH2_CLIENT_ID=${OAUTH2_CLIENT_ID}
+      - OAUTH2_CLIENT_SECRET=${OAUTH2_CLIENT_SECRET}
+      - OAUTH2_REDIRECT_ADDRESS=${OAUTH2_REDIRECT_ADDRESS}
+#      - OAUTH2_REDIRECT_PATH=${OAUTH2_REDIRECT_PATH}
+      - OAUTH2_TOKEN_URL=${OAUTH2_TOKEN_URL}
+      - OAUTH2_USER_INFO_URL=${OAUTH2_USER_INFO_URL}
+      - OAUTH2_SCOPES=${OAUTH2_SCOPES}
+      - OAUTH2_ADMIN_EMAIL=${OAUTH2_ADMIN_EMAIL}
+      - OAUTH2_PROFILE_ATTRIBUTES=${OAUTH2_PROFILE_ATTRIBUTES}
 
   knowagepython:
     image: knowagelabs/knowage-python-docker:7.2
     environment:
-      - HMAC_KEY=1234123412341234123412341234
-      - KNOWAGE_PUBLIC_ADDRESS=localhost
-      - PUBLIC_ADDRESS=localhost
+      - HMAC_KEY=${HMAC_KEY}
+      - KNOWAGE_PUBLIC_ADDRESS=${PUBLIC_ADDRESS}
+      - PUBLIC_ADDRESS=${PUBLIC_ADDRESS}
     networks:
       - main
 
   knowager:
     image: knowagelabs/knowage-r-docker:7.2
     environment:
-      - HMAC_KEY=1234123412341234123412341234
+      - HMAC_KEY=${HMAC_KEY}
     networks:
       - main
 
   knowagedb:
     image: mariadb:10.3
     environment:
-      - MYSQL_USER=knowage
-      - MYSQL_PASSWORD=knowage
-      - MYSQL_DATABASE=knowage
-      - MYSQL_ROOT_PASSWORD=knowage
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+      - MYSQL_DATABASE=${DB_DB}
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
     networks:
       - main
     volumes:

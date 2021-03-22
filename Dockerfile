@@ -1,5 +1,7 @@
 # Pinned 7.4.0-SNAPSHOT
 FROM knowagelabs/knowage-server-docker@sha256:da7cfedc628a35cb5d136ba4d8d369f026f8672420448582966f5915195fb5b3
+
+#FROM knowagelabs/knowage-server-docker:7.4
 #FROM knowagelabs/knowage-server-docker:7.2
 #FROM knowagelabs/knowage-server-docker:8.0.0-SNAPSHOT
 
